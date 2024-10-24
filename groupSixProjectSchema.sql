@@ -1,3 +1,4 @@
+drop database GroupSixProject;
 create database GroupSixProject;
 use GroupSixProject;
 
@@ -8,6 +9,15 @@ create table users (
 	role int,					/*Int for roles. EX) 1 for developer, 2 for Illustrator, 3 for Buyer, ETC... */
 	primary key(userID)
 	);
+    
+    create table artworks (
+	artID int,
+    artFranchise varchar(20),
+    artCharacter varchar(20),
+    illustrator int,
+    primary key(artID),
+    foreign key (illustrator) references users(userID)
+    );
 	
 create table games (
 	gameID int,
@@ -27,18 +37,7 @@ create table sets (
     primary key(setID)
     );
     
-create table transactions (
-	transID int, 				/*int to represent id of this transaction */
-	cardInstID int,				/* int to represent the id of the card instance*/
-    initiator int,				/* int to represent the userID of the seller*/
-    initiatedOn date, 			
-    price float,
-    buyer int,					/*int for the UserID of the buyer*/
-    primary key (transID, cardInstID, initiator),
-	foreign key (initiator) references users(userID),
-    foreign key (cardInstID) references cardInstances(cardInstID)
-	);
-create table decks (
+    create table decks (
 	deckID int,
     deckName varchar(20),
     deckOwner int,
@@ -56,16 +55,7 @@ create table cards (
     foreign key (cardCreator) references users(userID)
     );
     
-create table artworks (
-	artID int,
-    artFranchise varchar(20),
-    artCharacter varchar(20),
-    illustrator int,
-    primary key(artID),
-    foreign key (illustrator) references users(userID)
-    );
-    
-create table cardInstances (
+    create table cardInstances (
 	cardInstID int,
 	cardNum int, 
     cardOwner int,
@@ -76,3 +66,20 @@ create table cardInstances (
     foreign key (cardOwner) references users(userID),
     foreign key (cardDeck) references decks(deckID)
     );
+    
+create table transactions (
+	transID int, 				/*int to represent id of this transaction */
+	cardInstID int,				/* int to represent the id of the card instance*/
+    initiator int,				/* int to represent the userID of the seller*/
+    initiatedOn date, 			
+    price float,
+    buyer int,					/*int for the UserID of the buyer*/
+    primary key (transID, cardInstID, initiator),
+	foreign key (initiator) references users(userID),
+    foreign key (cardInstID) references cardInstances(cardInstID)
+	);
+
+    
+
+    
+
