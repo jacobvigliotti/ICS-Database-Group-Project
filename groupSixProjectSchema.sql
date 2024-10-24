@@ -1,5 +1,5 @@
-drop database GroupSixProject;
-create database GroupSixProject;
+drop database if exists GroupSixProject;
+create database if not exists GroupSixProject;
 use GroupSixProject;
 
 create table users (
