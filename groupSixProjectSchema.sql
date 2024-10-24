@@ -67,5 +67,5 @@ create table cardInstances (
     cardCond int,				/*int to represent condition on a scale of 1 to 5*/
     foreign key (cardNum) references cards(cardNum),
     foreign key (cardOwner) references users(userID),
-    primary key(cardInstId)
+    primary key(cardInstId, cardNum)
     );
