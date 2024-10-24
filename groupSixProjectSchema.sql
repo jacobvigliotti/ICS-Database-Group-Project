@@ -26,12 +26,15 @@ create table sets (
     );
     
 create table transactions (
-	cardInstance 				/* Not sure what variable type to go with on this one*/
+	transID int, 				/*int to represent id of this transaction */
+	cardInstID int,				/* int to represent the id of the card instance*/
     initiator int,				/* int to represent the userID of the seller*/
     initiatedOn date, 			/*Not sure if Initiated On meant the date, or somthing else*/
     price float,
-    buyer int					/*int for the UserID of the buyer*/
-								/*Would the cardInstance work for the primary? I think another attribute for transaction ID number would be cleaner*/
+    buyer int,					/*int for the UserID of the buyer*/
+	foreign key (initiator) references users(userID),
+    foreign key (cardInstID) references cardInstances(cardInstID),
+    primary key (transID, cardInstID, initiator)
 	);
 create table decks (
 	deckID int,
@@ -58,7 +61,11 @@ create table artworks (
     );
     
 create table cardInstances (
-								/*this line for Card Definition. What variable type should be used?*/
+	cardInstID int,
+	cardNum int, 
     cardOwner int,
     cardCond int,				/*int to represent condition on a scale of 1 to 5*/
+    foreign key (cardNum) references cards(cardNum),
+    foreign key (cardOwner) references users(userID),
+    primary key(cardInstId, cardNum)
     );
