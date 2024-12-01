@@ -22,7 +22,7 @@ create table users (
 	
 drop table if exists games;
 create table games (
-	gameID int,
+	gameID int auto_increment,
     gameType enum('Competitive', 'Casual'),
     gameDate date,
     gameLoc varchar(20),
@@ -149,5 +149,22 @@ insert into transactions values (3, 3, 10, '2023-11-07', 1.5,8);
 insert into transactions values (4, 4, 8, '2022-06-14', 2.25,9);
 insert into transactions values (5, 5, 6, '2024-05-30', 21,7);
 
-select * from cardInstances natural join cards natural join artworks
-where cards.cardArtwork = artworks.artID;
+/* Criteria 6: The findGames procedure can be used for a player to search for games within a given range and find the host of said game*/
+
+drop procedure if exists findGames;
+delimiter /
+create procedure findGames(startDate date, endDate date)
+	begin
+		select gameLoc as Location, gameDate as Date, gameType as 'Game Type', concat(fname, ' ', lname) as 'Host Name'
+        from games natural join users
+        where gameHost = userID and gameDate >= startDate and gameDate <= endDate;
+    end
+    /
+delimiter ;
+
+call findGames('2023-01-01', '2024-12-31');
+
+use groupsixproject;
+select * from games;
+
+insert into games (gameType, gameDate, gameLoc, gameHost) values ('Competitive', '2026-11-02', 'Jakes House', 7);

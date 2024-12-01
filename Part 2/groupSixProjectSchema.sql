@@ -6,14 +6,15 @@ create table users (
 	userID int,
 	fname varchar(20),
 	lname varchar(20),
-	role int,					/*Int for roles. EX) 1 for developer, 2 for Illustrator, 3 for Buyer, ETC... */
+	role enum('illustrator', 'developer', 'player'),					/*Int for roles. EX) 1 for developer, 2 for Illustrator, 3 for Buyer, ETC... */
 	primary key(userID)
 	);
     
     create table artworks (
 	artID int,
     artFranchise varchar(20),
-    artCharacter varchar(20),
+    artTitle varchar(20),
+    artSubtitle varchar(20),
     illustrator int,
     primary key(artID),
     foreign key (illustrator) references users(userID)
@@ -51,15 +52,17 @@ create table cards (
     cardColor varchar(20),		
     cardType varchar(20),
     cardCreator int,
+    cardArtwork int,
     primary key(cardNum),
-    foreign key (cardCreator) references users(userID)
+    foreign key (cardCreator) references users(userID),
+    foreign key (cardArtwork) references artworks(artID)
     );
     
     create table cardInstances (
 	cardInstID int,
 	cardNum int, 
     cardOwner int,
-    cardCond int, /*int to represent condition on a scale of 1 to 5*/
+    cardCond enum('New', 'Good', 'Fair', 'Poor'), /*int to represent condition on a scale of 1 to 5*/
     cardDeck int, 
     primary key(cardInstId, cardNum),
 	foreign key (cardNum) references cards(cardNum),
@@ -76,7 +79,8 @@ create table transactions (
     buyer int,					/*int for the UserID of the buyer*/
     primary key (transID, cardInstID, initiator),
 	foreign key (initiator) references users(userID),
-    foreign key (cardInstID) references cardInstances(cardInstID)
+    foreign key (cardInstID) references cardInstances(cardInstID),
+    foreign key (buyer) references users(userID)
 	);
 
     
