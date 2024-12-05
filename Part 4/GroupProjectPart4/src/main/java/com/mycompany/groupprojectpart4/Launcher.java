@@ -1,10 +1,15 @@
 package com.mycompany.groupprojectpart4;
 
+import com.mysql.cj.jdbc.exceptions.MysqlDataTruncation;
+import java.awt.Color;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 
 
 
@@ -45,13 +50,16 @@ public class Launcher extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        mandatoryFieldsDialog = new javax.swing.JDialog();
+        jLabel7 = new javax.swing.JLabel();
+        jButton2 = new javax.swing.JButton();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         gamesList = new javax.swing.JList<>();
         newGameButton = new javax.swing.JButton();
         saveGameButton = new javax.swing.JButton();
-        gameID = new javax.swing.JLabel();
+        gameIDLabel = new javax.swing.JLabel();
         gameTypeBox = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -63,12 +71,51 @@ public class Launcher extends javax.swing.JFrame {
         jScrollPane4 = new javax.swing.JScrollPane();
         gameHostList = new javax.swing.JList<>();
         jLabel5 = new javax.swing.JLabel();
+        gameIDValue = new javax.swing.JTextField();
+        deleteGameButton = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jList2 = new javax.swing.JList<>();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         jList3 = new javax.swing.JList<>();
+
+        jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel7.setText("You must complete all fields to save.");
+        jLabel7.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jLabel7.setRequestFocusEnabled(false);
+
+        jButton2.setText("OK");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout mandatoryFieldsDialogLayout = new javax.swing.GroupLayout(mandatoryFieldsDialog.getContentPane());
+        mandatoryFieldsDialog.getContentPane().setLayout(mandatoryFieldsDialogLayout);
+        mandatoryFieldsDialogLayout.setHorizontalGroup(
+            mandatoryFieldsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mandatoryFieldsDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 337, Short.MAX_VALUE)
+                .addContainerGap())
+            .addGroup(mandatoryFieldsDialogLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        mandatoryFieldsDialogLayout.setVerticalGroup(
+            mandatoryFieldsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mandatoryFieldsDialogLayout.createSequentialGroup()
+                .addContainerGap(61, Short.MAX_VALUE)
+                .addComponent(jLabel7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton2)
+                .addContainerGap(40, Short.MAX_VALUE))
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.X_AXIS));
@@ -101,10 +148,9 @@ public class Launcher extends javax.swing.JFrame {
             }
         });
 
-        gameID.setText("Game ID: New");
+        gameIDLabel.setText("Game ID:");
 
-        gameTypeBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "", "Competitive", "Casual" }));
-        gameTypeBox.setSelectedIndex(1);
+        gameTypeBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Competitive", "Casual" }));
 
         jLabel2.setText("Game type:");
 
@@ -117,18 +163,20 @@ public class Launcher extends javax.swing.JFrame {
             }
         });
 
-        jLabel4.setText("Game date:");
+        jLabel4.setText("Game date (MM/DD/YYYY):");
 
-        gameDateMMBox.setText("MM");
+        gameDateMMBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                gameDateMMBoxActionPerformed(evt);
+            }
+        });
 
-        gameDateDDBox.setText("DD");
         gameDateDDBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 gameDateDDBoxActionPerformed(evt);
             }
         });
 
-        gameDateYYYYBox.setText("YYYY");
         gameDateYYYYBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 gameDateYYYYBoxActionPerformed(evt);
@@ -140,9 +188,29 @@ public class Launcher extends javax.swing.JFrame {
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
+        gameHostList.setDropMode(javax.swing.DropMode.ON);
         jScrollPane4.setViewportView(gameHostList);
 
         jLabel5.setText("Game host:");
+
+        gameIDValue.setEditable(false);
+        gameIDValue.setEnabled(false);
+        gameIDValue.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                gameIDValueActionPerformed(evt);
+            }
+        });
+
+        deleteGameButton.setText("Delete Game");
+        deleteGameButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteGameButtonActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("/");
+
+        jLabel6.setText("/");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -151,28 +219,34 @@ public class Launcher extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(43, 43, 43)
                         .addComponent(newGameButton)
-                        .addGap(18, 18, 18)
-                        .addComponent(saveGameButton))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(saveGameButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(deleteGameButton))
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(gameTypeBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(gameLocationBox, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(gameID, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(gameTypeBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(gameLocationBox, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(gameDateMMBox, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(gameDateDDBox, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(gameDateYYYYBox, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 60, Short.MAX_VALUE)
+                        .addComponent(gameIDLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(gameIDValue, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(gameDateMMBox, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(gameDateDDBox, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(gameDateYYYYBox, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 52, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -185,15 +259,16 @@ public class Launcher extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(gameID)
-                            .addComponent(jLabel5))
-                        .addGap(18, 18, 18)
+                            .addComponent(gameIDLabel)
+                            .addComponent(jLabel5)
+                            .addComponent(gameIDValue))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(gameTypeBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
+                                .addGap(24, 24, 24)
                                 .addComponent(jLabel3)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(gameLocationBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -203,13 +278,16 @@ public class Launcher extends javax.swing.JFrame {
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(gameDateMMBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(gameDateDDBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(gameDateYYYYBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(gameDateYYYYBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel1)
+                                    .addComponent(jLabel6))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(newGameButton)
-                                    .addComponent(saveGameButton)))
+                                    .addComponent(saveGameButton)
+                                    .addComponent(deleteGameButton)))
                             .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 366, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jScrollPane1))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -235,7 +313,7 @@ public class Launcher extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -261,7 +339,7 @@ public class Launcher extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -275,12 +353,12 @@ public class Launcher extends javax.swing.JFrame {
 
     private void newGameButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newGameButtonActionPerformed
         // TODO add your handling code here:
-        gameID.setText("Game ID: NEW");
+        gameIDValue.setText("");
         gameTypeBox.setSelectedIndex(0);
         gameLocationBox.setText("");
-        gameDateMMBox.setText("MM");
-        gameDateDDBox.setText("DD");
-        gameDateYYYYBox.setText("YYYY");
+        gameDateMMBox.setText("");
+        gameDateDDBox.setText("");
+        gameDateYYYYBox.setText("");
         gameHostList.clearSelection();
         gamesList.clearSelection();
     }//GEN-LAST:event_newGameButtonActionPerformed
@@ -307,13 +385,13 @@ public class Launcher extends javax.swing.JFrame {
                 ResultSet rs = connection.createStatement().executeQuery(query);
                 if (rs.next()) {
                     System.out.println(rs.getString("gameLoc"));
-                    gameID.setText("Game ID: " + rs.getString("gameID"));
+                    gameIDValue.setText(rs.getString("gameID"));
                     switch (rs.getString("gameType")) {
                         case "Competitive":
-                            gameTypeBox.setSelectedIndex(1);
+                            gameTypeBox.setSelectedIndex(0);
                             break;
                         case "Casual":
-                            gameTypeBox.setSelectedIndex(2);
+                            gameTypeBox.setSelectedIndex(1);
                             break;
                         default:
                             gameTypeBox.setSelectedIndex(0);
@@ -337,22 +415,74 @@ public class Launcher extends javax.swing.JFrame {
 
     private void saveGameButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveGameButtonActionPerformed
         // TODO add your handling code here:
-        String query = "insert into games (gameType, gameDate, gameLoc, gameHost) values (\""
-                + gameTypeBox.getSelectedItem().toString() + "\", \""
-                + gameDateYYYYBox.getText() + "-"
-                + gameDateMMBox.getText() + "-"
-                + gameDateDDBox.getText() + "\", \""
-                + gameLocationBox.getText() + "\", \""
-                + gameHostList.getSelectedValue().split(" - ")[0]
-                + "\");";
         try {
-            int recordsUpdated = connection.createStatement().executeUpdate(query);
+        String gameType = gameTypeBox.getSelectedItem().toString();
+        String gameDate = gameDateYYYYBox.getText() + "-" + gameDateMMBox.getText() + "-" + gameDateDDBox.getText();
+        String gameLoc = gameLocationBox.getText();
+        String gameHost = gameHostList.getSelectedValue().split(" - ")[0];
+        String query;
+        String id = gameIDValue.getText().toLowerCase();
+        System.out.println("ID = " + id);
+        if (!id.isEmpty()) {
+            query = "update games set gameType = \""
+                    + gameType 
+                    + "\", gameDate = \""
+                    + gameDate 
+                    + "\", gameLoc = \""
+                    + gameLoc 
+                    + "\", gameHost = \""
+                    + gameHost
+                    + "\" where gameID = \"" 
+                    + id + "\"";
+                    
+        } else {
+            query = "insert into games (gameType, gameDate, gameLoc, gameHost) values (\""
+                    + gameTypeBox.getSelectedItem().toString() + "\", \""
+                    + gameDateYYYYBox.getText() + "-"
+                    + gameDateMMBox.getText() + "-"
+                    + gameDateDDBox.getText() + "\", \""
+                    + gameLocationBox.getText() + "\", \""
+                    + gameHostList.getSelectedValue().split(" - ")[0]
+                    + "\");";
+        }
+            int recUpdated = connection.createStatement().executeUpdate(query);
+            System.out.println(query + " resulted in records updated: " + recUpdated);
             refresh();
+        } catch (NullPointerException e) {
+            JOptionPane.showMessageDialog(this, "Failed to save. Ensure all fields are filled out.");
+        } catch (MysqlDataTruncation e) {
+            JOptionPane.showMessageDialog(this, "Failed to save. Invalid data format.\n"
+                    + "Details: " + e.getMessage());
         } catch (Exception exception) {
             exception.printStackTrace();
         }
 
+
     }//GEN-LAST:event_saveGameButtonActionPerformed
+
+    private void gameIDValueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gameIDValueActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_gameIDValueActionPerformed
+
+    private void deleteGameButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteGameButtonActionPerformed
+        // TODO add your handling code here:
+        String id = gameIDValue.getText().toLowerCase();
+        String query = "delete from games where gameID = \"" + id + "\"";
+        try {
+            connection.createStatement().executeUpdate(query);
+            refresh();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+    }//GEN-LAST:event_deleteGameButtonActionPerformed
+
+    private void gameDateMMBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gameDateMMBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_gameDateMMBoxActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton2ActionPerformed
 
    
     /**
@@ -426,28 +556,36 @@ public class Launcher extends javax.swing.JFrame {
 }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton deleteGameButton;
     private javax.swing.JTextField gameDateDDBox;
     private javax.swing.JTextField gameDateMMBox;
     private javax.swing.JTextField gameDateYYYYBox;
     private javax.swing.JList<String> gameHostList;
-    private javax.swing.JLabel gameID;
+    private javax.swing.JLabel gameIDLabel;
+    private javax.swing.JTextField gameIDValue;
     private javax.swing.JTextField gameLocationBox;
     private javax.swing.JComboBox<String> gameTypeBox;
     private javax.swing.JList<String> gamesList;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JList<String> jList2;
     private javax.swing.JList<String> jList3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JDialog mandatoryFieldsDialog;
     private javax.swing.JButton newGameButton;
     private javax.swing.JButton saveGameButton;
     // End of variables declaration//GEN-END:variables
